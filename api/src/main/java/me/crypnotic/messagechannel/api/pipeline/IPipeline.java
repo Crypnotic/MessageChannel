@@ -25,13 +25,11 @@ package me.crypnotic.messagechannel.api.pipeline;
 
 import java.util.function.Consumer;
 
-import me.crypnotic.messagechannel.api.exception.MessageChannelException;
-
 public interface IPipeline {
 
     boolean addListener(Consumer<PipelineMessage> callable);
 
     boolean send(PipelineMessage message);
 
-    void call(PipelineMessage message) throws MessageChannelException;
+    void call(PipelineMessage message);
 }

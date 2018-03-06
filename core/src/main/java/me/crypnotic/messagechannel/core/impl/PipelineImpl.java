@@ -30,7 +30,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import me.crypnotic.messagechannel.api.exception.MessageChannelException;
 import me.crypnotic.messagechannel.api.pipeline.IPipeline;
 import me.crypnotic.messagechannel.api.pipeline.PipelineMessage;
 import me.crypnotic.messagechannel.core.MessageChannelCore;
@@ -71,7 +70,7 @@ public class PipelineImpl implements IPipeline {
         }
     }
 
-    public final void call(PipelineMessage message) throws MessageChannelException {
+    public final void call(PipelineMessage message) {
         synchronized (listeners) {
             listeners.forEach(listener -> listener.accept(message));
         }

@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import lombok.SneakyThrows;
 import me.crypnotic.messagechannel.api.exception.MessageChannelException;
 
 public class PipelineMessage {
@@ -65,7 +66,8 @@ public class PipelineMessage {
         return object;
     }
 
-    public <T> T read(Class<T> clazz) throws MessageChannelException {
+    @SneakyThrows(MessageChannelException.class)
+    public <T> T read(Class<T> clazz) {
         Object object = read();
         if (object.getClass().isAssignableFrom(clazz)) {
             return clazz.cast(object);

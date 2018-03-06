@@ -23,13 +23,11 @@
  */
 package me.crypnotic.messagechannel.api.pipeline;
 
-import me.crypnotic.messagechannel.api.exception.MessageChannelException;
-
 public interface IPipelineRegistry {
 
-    void receive(byte[] data) throws MessageChannelException;
+    void receive(byte[] data);
 
-    IPipeline register(String channel) throws MessageChannelException;
+    IPipeline register(String channel);
 
     IPipeline getRegisteredPipeline(String channel);
 

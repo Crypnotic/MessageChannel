@@ -55,11 +55,7 @@ public class MessageChannelBukkit extends JavaPlugin implements IPlatform {
         getServer().getMessenger().registerIncomingPluginChannel(this, "mech|server", new PluginMessageListener() {
             @Override
             public void onPluginMessageReceived(String channel, Player player, byte[] data) {
-                try {
-                    core.getPipelineRegistry().receive(data);
-                } catch (MessageChannelException exception) {
-                    exception.printStackTrace();
-                }
+                core.getPipelineRegistry().receive(data);
             }
         });
     }

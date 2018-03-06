@@ -67,7 +67,7 @@ public class MessageChannelSponge implements IPlatform {
                 (buffer, connection, side) -> {
                     try {
                         core.getPipelineRegistry().receive(buffer.readBytes(buffer.available()));
-                    } catch (MessageChannelException | UnsupportedOperationException exception) {
+                    } catch (UnsupportedOperationException exception) {
                         exception.printStackTrace();
                     }
                 });

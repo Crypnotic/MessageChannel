@@ -71,11 +71,7 @@ public class MessageChannelBungeecord extends Plugin implements IPlatform, Liste
     @EventHandler
     public void onPluginMessage(PluginMessageEvent event) {
         if (event.getTag().equals("mech|proxy")) {
-            try {
-                core.getPipelineRegistry().receive(event.getData());
-            } catch (MessageChannelException exception) {
-                exception.printStackTrace();
-            }
+            core.getPipelineRegistry().receive(event.getData());
         }
     }
 }

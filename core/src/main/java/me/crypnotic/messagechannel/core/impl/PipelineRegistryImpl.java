@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import lombok.SneakyThrows;
 import me.crypnotic.messagechannel.api.exception.MessageChannelException;
 import me.crypnotic.messagechannel.api.pipeline.IPipeline;
 import me.crypnotic.messagechannel.api.pipeline.IPipelineRegistry;
@@ -47,7 +48,8 @@ public class PipelineRegistryImpl implements IPipelineRegistry {
         this.pipelines = new HashMap<String, IPipeline>();
     }
 
-    public IPipeline register(String channel) throws MessageChannelException {
+    @SneakyThrows(MessageChannelException.class)
+    public IPipeline register(String channel) {
         if (!pipelines.containsKey(channel)) {
             synchronized (pipelines) {
                 if (!pipelines.containsKey(channel)) {
@@ -62,7 +64,8 @@ public class PipelineRegistryImpl implements IPipelineRegistry {
     }
 
     @SuppressWarnings("unchecked")
-    public final void receive(byte[] data) throws MessageChannelException {
+    @SneakyThrows(MessageChannelException.class)
+    public final void receive(byte[] data) {
         try {
             ByteArrayInputStream bytes = new ByteArrayInputStream(data);
             ObjectInputStream input = new ObjectInputStream(bytes);
