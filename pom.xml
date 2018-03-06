@@ -22,8 +22,7 @@
 	<distributionManagement>
 		<repository>
 			<id>bintray-crypnotic</id>
-			<name>Crypnotic-MessageChannel</name>
-			<url>https://api.bintray.com/maven/crypnotic/MessageChannel/MessageChannel/;publish=1</url>
+			<url>https://api.bintray.com/maven/Crypnotic/messagechannel/messagechannel/;publish=1</url>
 		</repository>
 	</distributionManagement>
 
