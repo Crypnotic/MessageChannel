@@ -1,4 +1,4 @@
-name: ${project.name}
+name: MessageChannel
 version: ${project.version}
 description: ${project.description}
 main: me.crypnotic.messagechannel.bukkit.MessageChannelBukkit

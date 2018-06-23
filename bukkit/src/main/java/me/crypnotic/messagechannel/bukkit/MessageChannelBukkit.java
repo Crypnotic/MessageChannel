@@ -71,4 +71,14 @@ public class MessageChannelBukkit extends JavaPlugin implements IPlatform {
         }
         return false;
     }
+
+    @Override
+    public boolean broadcast(PipelineMessage message, byte[] data) {
+        return false;
+    }
+
+    @Override
+    public boolean isProxy() {
+        return false;
+    }
 }

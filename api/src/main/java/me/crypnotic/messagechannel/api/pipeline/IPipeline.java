@@ -32,4 +32,6 @@ public interface IPipeline {
     boolean send(PipelineMessage message);
 
     void call(PipelineMessage message);
+    
+    boolean broadcast(PipelineMessage message);
 }

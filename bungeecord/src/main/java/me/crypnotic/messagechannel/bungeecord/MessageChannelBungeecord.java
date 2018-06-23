@@ -29,6 +29,7 @@ import me.crypnotic.messagechannel.api.access.IPlatform;
 import me.crypnotic.messagechannel.api.exception.MessageChannelException;
 import me.crypnotic.messagechannel.api.pipeline.PipelineMessage;
 import me.crypnotic.messagechannel.core.MessageChannelCore;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -68,10 +69,23 @@ public class MessageChannelBungeecord extends Plugin implements IPlatform, Liste
         return false;
     }
 
+    @Override
+    public boolean broadcast(PipelineMessage message, byte[] data) {
+        for (ServerInfo info : getProxy().getServers().values()) {
+            info.sendData("mech|server", data);
+        }
+        return true;
+    }
+
     @EventHandler
     public void onPluginMessage(PluginMessageEvent event) {
         if (event.getTag().equals("mech|proxy")) {
             core.getPipelineRegistry().receive(event.getData());
         }
+    }
+
+    @Override
+    public boolean isProxy() {
+        return false;
     }
 }

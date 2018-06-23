@@ -75,4 +75,23 @@ public class PipelineImpl implements IPipeline {
             listeners.forEach(listener -> listener.accept(message));
         }
     }
+
+    @Override
+    public boolean broadcast(PipelineMessage message) {
+        try {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            ObjectOutputStream output = new ObjectOutputStream(bytes);
+
+            output.writeUTF(channel);
+            output.writeObject(message.getTarget());
+            output.writeObject(message.getContents());
+
+            output.close();
+            bytes.close();
+
+            return core.getPlatform().broadcast(message, bytes.toByteArray());
+        } catch (IOException exception) {
+            return false;
+        }
+    }
 }

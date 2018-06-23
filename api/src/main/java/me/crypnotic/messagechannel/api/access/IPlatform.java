@@ -28,4 +28,8 @@ import me.crypnotic.messagechannel.api.pipeline.PipelineMessage;
 public interface IPlatform {
 
     boolean send(PipelineMessage message, byte[] data);
+
+    boolean broadcast(PipelineMessage message, byte[] data);
+
+    boolean isProxy();
 }
