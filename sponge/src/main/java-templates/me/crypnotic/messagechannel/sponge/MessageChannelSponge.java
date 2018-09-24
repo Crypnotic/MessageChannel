@@ -21,7 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.crypnotic.messagechannel.bungeecord;
+package me.crypnotic.messagechannel.sponge;
+
+import org.spongepowered.api.Game;
+import org.spongepowered.api.Platform;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.state.GameConstructionEvent;
+import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
+import org.spongepowered.api.network.ChannelBinding.RawDataChannel;
+import org.spongepowered.api.plugin.Plugin;
+
+import com.google.inject.Inject;
 
 import me.crypnotic.messagechannel.api.MessageChannelAPI;
 import me.crypnotic.messagechannel.api.access.IMessageChannel;
@@ -29,19 +40,17 @@ import me.crypnotic.messagechannel.api.access.IPlatform;
 import me.crypnotic.messagechannel.api.exception.MessageChannelException;
 import me.crypnotic.messagechannel.api.pipeline.PipelineMessage;
 import me.crypnotic.messagechannel.core.MessageChannelCore;
-import net.md_5.bungee.api.config.ServerInfo;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.event.PluginMessageEvent;
-import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.event.EventHandler;
 
-public class MessageChannelBungeecord extends Plugin implements IPlatform, Listener {
+@Plugin(id = "${project.artifactId}", name = "${project.name}", version = "${project.version}")
+public class MessageChannelSponge implements IPlatform {
 
+    @Inject
+    private Game game;
     private IMessageChannel core;
+    private RawDataChannel outgoing;
 
-    @Override
-    public void onLoad() {
+    @Listener
+    public void onGameConstruction(GameConstructionEvent event) {
         this.core = new MessageChannelCore(this);
 
         try {
@@ -51,41 +60,39 @@ public class MessageChannelBungeecord extends Plugin implements IPlatform, Liste
         }
     }
 
-    @Override
-    public void onEnable() {
-        getProxy().registerChannel("messagechannel:proxy");
-        getProxy().registerChannel("messagechannel:server");
-
-        getProxy().getPluginManager().registerListener(this, this);
+    @Listener
+    public void onGamePreInitialization(GamePreInitializationEvent event) {
+        this.outgoing = game.getChannelRegistrar().createRawChannel(this, "messagechannel:proxy");
+        game.getChannelRegistrar().createRawChannel(this, "messagechannel:server").addListener(Platform.Type.SERVER,
+                (buffer, connection, side) -> {
+                    try {
+                        core.getPipelineRegistry().receive(buffer.readBytes(buffer.available()));
+                    } catch (UnsupportedOperationException exception) {
+                        exception.printStackTrace();
+                    }
+                });
     }
 
     @Override
     public boolean send(PipelineMessage message, byte[] data) {
-        ProxiedPlayer player = getProxy().getPlayer(message.getTarget());
-        if (player != null) {
-            player.getServer().sendData("messagechannel:server", data);
-            return true;
+        if (game.getServer().getOnlinePlayers().size() > 0) {
+            Player player = (Player) game.getServer().getOnlinePlayers().toArray()[0];
+            if (player != null) {
+                outgoing.sendTo(player, (buffer) -> {
+                    buffer.writeBytes(data);
+                });
+            }
         }
         return false;
     }
 
     @Override
     public boolean broadcast(PipelineMessage message, byte[] data) {
-        for (ServerInfo info : getProxy().getServers().values()) {
-            info.sendData("messagechannel:server", data);
-        }
-        return true;
-    }
-
-    @EventHandler
-    public void onPluginMessage(PluginMessageEvent event) {
-        if (event.getTag().equals("messagechannel:proxy")) {
-            core.getPipelineRegistry().receive(event.getData());
-        }
+        return false;
     }
 
     @Override
     public boolean isProxy() {
-        return true;
+        return false;
     }
 }

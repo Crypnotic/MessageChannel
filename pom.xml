@@ -4,7 +4,7 @@
 
 	<groupId>me.crypnotic.messagechannel</groupId>
 	<artifactId>messagechannel</artifactId>
-	<version>2.1.0</version>
+	<version>2.2.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>MessageChannel</name>
@@ -17,6 +17,7 @@
 		<module>bungeecord</module>
 		<module>core</module>
 		<module>sponge</module>
+		<module>velocity</module>
 	</modules>
 
 	<dependencies>

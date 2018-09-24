@@ -10,12 +10,12 @@
 		<relativePath>../</relativePath>
 	</parent>
 
-	<artifactId>messagechannel-sponge</artifactId>
+	<artifactId>messagechannel-velocity</artifactId>
 
 	<repositories>
 		<repository>
-			<id>sponge-repo</id>
-			<url>http://repo.spongepowered.org/maven</url>
+			<id>velocity-repo</id>
+			<url>https://repo.velocitypowered.com/snapshots/</url>
 		</repository>
 	</repositories>
 
@@ -27,10 +27,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.spongepowered</groupId>
-			<artifactId>spongeapi</artifactId>
-			<version>7.1.0-SNAPSHOT</version>
-			<scope>provided</scope>
+			<groupId>com.velocitypowered</groupId>
+			<artifactId>velocity-api</artifactId>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 

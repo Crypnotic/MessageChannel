@@ -27,11 +27,11 @@ import java.util.function.Consumer;
 
 public interface IPipeline {
 
-    boolean addListener(Consumer<PipelineMessage> callable);
+    void onReceive(Consumer<PipelineMessage> callable);
 
-    boolean send(PipelineMessage message);
+    void send(PipelineMessage message);
 
-    void call(PipelineMessage message);
-    
-    boolean broadcast(PipelineMessage message);
+    void post(PipelineMessage message);
+
+    void broadcast(PipelineMessage message);
 }

@@ -30,22 +30,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import me.crypnotic.messagechannel.api.exception.MessageChannelException;
 import me.crypnotic.messagechannel.api.pipeline.IPipeline;
 import me.crypnotic.messagechannel.api.pipeline.IPipelineRegistry;
 import me.crypnotic.messagechannel.api.pipeline.PipelineMessage;
 import me.crypnotic.messagechannel.core.MessageChannelCore;
+import me.crypnotic.messagechannel.core.impl.pipeline.AsyncPipeline;
+import me.crypnotic.messagechannel.core.impl.pipeline.SyncPipeline;
 
 public class PipelineRegistryImpl implements IPipelineRegistry {
 
     private final MessageChannelCore core;
     private final Map<String, IPipeline> pipelines;
+    @Getter
+    private ExecutorService executor;
 
     public PipelineRegistryImpl(MessageChannelCore core) {
         this.core = core;
         this.pipelines = new HashMap<String, IPipeline>();
+        this.executor = Executors.newFixedThreadPool(2);
     }
 
     @SneakyThrows(MessageChannelException.class)
@@ -53,7 +61,22 @@ public class PipelineRegistryImpl implements IPipelineRegistry {
         if (!pipelines.containsKey(channel)) {
             synchronized (pipelines) {
                 if (!pipelines.containsKey(channel)) {
-                    IPipeline pipeline = new PipelineImpl(core, channel);
+                    IPipeline pipeline = new SyncPipeline(core, this, channel);
+                    pipelines.put(channel, pipeline);
+
+                    return pipeline;
+                }
+            }
+        }
+        throw new MessageChannelException("Channel (" + channel + ") already has a registered pipeline!");
+    }
+
+    @SneakyThrows(MessageChannelException.class)
+    public IPipeline registerAsync(String channel) {
+        if (!pipelines.containsKey(channel)) {
+            synchronized (pipelines) {
+                if (!pipelines.containsKey(channel)) {
+                    IPipeline pipeline = new AsyncPipeline(core, this, channel);
                     pipelines.put(channel, pipeline);
 
                     return pipeline;
@@ -81,7 +104,7 @@ public class PipelineRegistryImpl implements IPipelineRegistry {
 
             synchronized (pipelines) {
                 if (pipelines.containsKey(channel)) {
-                    pipelines.get(channel).call(message);
+                    pipelines.get(channel).post(message);
                 }
             }
         } catch (IOException | ClassNotFoundException exception) {

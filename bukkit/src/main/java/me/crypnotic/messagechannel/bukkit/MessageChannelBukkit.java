@@ -51,8 +51,8 @@ public class MessageChannelBukkit extends JavaPlugin implements IPlatform {
 
     @Override
     public void onEnable() {
-        getServer().getMessenger().registerOutgoingPluginChannel(this, "mech|proxy");
-        getServer().getMessenger().registerIncomingPluginChannel(this, "mech|server", new PluginMessageListener() {
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "messagechannel:proxy");
+        getServer().getMessenger().registerIncomingPluginChannel(this, "messagechannel:server", new PluginMessageListener() {
             @Override
             public void onPluginMessageReceived(String channel, Player player, byte[] data) {
                 core.getPipelineRegistry().receive(data);
@@ -65,7 +65,7 @@ public class MessageChannelBukkit extends JavaPlugin implements IPlatform {
         if (getServer().getOnlinePlayers().size() > 0) {
             Player player = (Player) getServer().getOnlinePlayers().toArray()[0];
             if (player != null) {
-                player.sendPluginMessage(this, "mech|proxy", data);
+                player.sendPluginMessage(this, "messagechannel:proxy", data);
                 return true;
             }
         }

@@ -23,13 +23,19 @@
  */
 package me.crypnotic.messagechannel.api.pipeline;
 
+import java.util.concurrent.ExecutorService;
+
 public interface IPipelineRegistry {
 
     void receive(byte[] data);
 
     IPipeline register(String channel);
+    
+    IPipeline registerAsync(String channel);
 
     IPipeline getRegisteredPipeline(String channel);
 
+    ExecutorService getExecutor();
+    
     boolean isRegisteredPipeline(String channel);
 }

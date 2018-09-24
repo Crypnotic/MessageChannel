@@ -21,18 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.crypnotic.messagechannel.sponge;
+package me.crypnotic.messagechannel.velocity;
 
-import org.spongepowered.api.Game;
-import org.spongepowered.api.Platform;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GameConstructionEvent;
-import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
-import org.spongepowered.api.network.ChannelBinding.RawDataChannel;
-import org.spongepowered.api.plugin.Plugin;
+import java.util.Optional;
 
 import com.google.inject.Inject;
+import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.connection.PluginMessageEvent;
+import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.plugin.Plugin;
+import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.ServerConnection;
+import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
+import com.velocitypowered.api.proxy.server.RegisteredServer;
 
 import me.crypnotic.messagechannel.api.MessageChannelAPI;
 import me.crypnotic.messagechannel.api.access.IMessageChannel;
@@ -41,16 +43,19 @@ import me.crypnotic.messagechannel.api.exception.MessageChannelException;
 import me.crypnotic.messagechannel.api.pipeline.PipelineMessage;
 import me.crypnotic.messagechannel.core.MessageChannelCore;
 
-@Plugin(id = "messagechannel")
-public class MessageChannelSponge implements IPlatform {
+@Plugin(id = "${project.artifactId}", name = "${project.name}", version = "${project.version}")
+public class MessageChannelVelocity implements IPlatform {
+
+    private IMessageChannel core;
+    private ProxyServer server;
+
+    private MinecraftChannelIdentifier INCOMING;
+    private MinecraftChannelIdentifier OUTGOING;
 
     @Inject
-    private Game game;
-    private IMessageChannel core;
-    private RawDataChannel outgoing;
+    public MessageChannelVelocity(ProxyServer server) {
+        this.server = server;
 
-    @Listener
-    public void onGameConstruction(GameConstructionEvent event) {
         this.core = new MessageChannelCore(this);
 
         try {
@@ -60,27 +65,22 @@ public class MessageChannelSponge implements IPlatform {
         }
     }
 
-    @Listener
-    public void onGamePreInitialization(GamePreInitializationEvent event) {
-        this.outgoing = game.getChannelRegistrar().createRawChannel(this, "mech|proxy");
-        game.getChannelRegistrar().createRawChannel(this, "mech|server").addListener(Platform.Type.SERVER,
-                (buffer, connection, side) -> {
-                    try {
-                        core.getPipelineRegistry().receive(buffer.readBytes(buffer.available()));
-                    } catch (UnsupportedOperationException exception) {
-                        exception.printStackTrace();
-                    }
-                });
+    @Subscribe
+    public void onProxyInitialize(ProxyInitializeEvent event) {
+        server.getChannelRegistrar().register(INCOMING = MinecraftChannelIdentifier.create("messagechannel", "proxy"));
+        server.getChannelRegistrar().register(OUTGOING = MinecraftChannelIdentifier.create("messagechannel", "server"));
+
+        server.getEventManager().register(this, this);
     }
 
     @Override
     public boolean send(PipelineMessage message, byte[] data) {
-        if (game.getServer().getOnlinePlayers().size() > 0) {
-            Player player = (Player) game.getServer().getOnlinePlayers().toArray()[0];
-            if (player != null) {
-                outgoing.sendTo(player, (buffer) -> {
-                    buffer.writeBytes(data);
-                });
+        Optional<Player> player = server.getPlayer(message.getTarget());
+        if (player.isPresent()) {
+            Optional<ServerConnection> server = player.get().getCurrentServer();
+            if (server.isPresent()) {
+                server.get().sendPluginMessage(OUTGOING, data);
+                return true;
             }
         }
         return false;
@@ -88,11 +88,21 @@ public class MessageChannelSponge implements IPlatform {
 
     @Override
     public boolean broadcast(PipelineMessage message, byte[] data) {
-        return false;
+        for (RegisteredServer subserver : server.getAllServers()) {
+            subserver.sendPluginMessage(OUTGOING, data);
+        }
+        return true;
+    }
+
+    @Subscribe
+    public void onPluginMessage(PluginMessageEvent event) {
+        if (event.getIdentifier().equals(INCOMING)) {
+            core.getPipelineRegistry().receive(event.getData());
+        }
     }
 
     @Override
     public boolean isProxy() {
-        return false;
+        return true;
     }
 }
