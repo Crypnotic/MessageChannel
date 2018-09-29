@@ -25,7 +25,7 @@ package me.crypnotic.messagechannel.api.access;
 
 import me.crypnotic.messagechannel.api.pipeline.PipelineMessage;
 
-public interface IPlatform {
+public interface IRelay {
 
     boolean send(PipelineMessage message, byte[] data);
 

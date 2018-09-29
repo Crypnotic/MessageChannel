@@ -29,12 +29,12 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import me.crypnotic.messagechannel.api.MessageChannelAPI;
 import me.crypnotic.messagechannel.api.access.IMessageChannel;
-import me.crypnotic.messagechannel.api.access.IPlatform;
+import me.crypnotic.messagechannel.api.access.IRelay;
 import me.crypnotic.messagechannel.api.exception.MessageChannelException;
 import me.crypnotic.messagechannel.api.pipeline.PipelineMessage;
 import me.crypnotic.messagechannel.core.MessageChannelCore;
 
-public class MessageChannelBukkit extends JavaPlugin implements IPlatform {
+public class MessageChannelBukkit extends JavaPlugin implements IRelay {
 
     private IMessageChannel core;
 

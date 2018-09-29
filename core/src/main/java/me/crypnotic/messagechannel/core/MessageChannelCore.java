@@ -23,26 +23,21 @@
  */
 package me.crypnotic.messagechannel.core;
 
+import lombok.Getter;
 import me.crypnotic.messagechannel.api.access.IMessageChannel;
-import me.crypnotic.messagechannel.api.access.IPlatform;
+import me.crypnotic.messagechannel.api.access.IRelay;
 import me.crypnotic.messagechannel.api.pipeline.IPipelineRegistry;
 import me.crypnotic.messagechannel.core.impl.PipelineRegistryImpl;
 
 public class MessageChannelCore implements IMessageChannel {
 
-    private IPlatform platform;
-    private IPipelineRegistry registry;
+    @Getter
+    private IRelay relay;
+    @Getter
+    private IPipelineRegistry pipelineRegistry;
 
-    public MessageChannelCore(IPlatform platform) {
-        this.platform = platform;
-        this.registry = new PipelineRegistryImpl(this);
-    }
-
-    public IPlatform getPlatform() {
-        return platform;
-    }
-
-    public IPipelineRegistry getPipelineRegistry() {
-        return registry;
+    public MessageChannelCore(IRelay relay) {
+        this.relay = relay;
+        this.pipelineRegistry = new PipelineRegistryImpl(this);
     }
 }

@@ -23,18 +23,16 @@
  */
 package me.crypnotic.messagechannel.api;
 
+import lombok.Getter;
 import me.crypnotic.messagechannel.api.access.IMessageChannel;
 import me.crypnotic.messagechannel.api.exception.MessageChannelException;
 import me.crypnotic.messagechannel.api.pipeline.IPipelineRegistry;
 
 public class MessageChannelAPI {
 
+    @Getter
     private static IMessageChannel core;
     private static final Object LOCK = new Object();
-
-    public static IMessageChannel getCore() {
-        return core;
-    }
 
     public static void setCore(IMessageChannel core) throws MessageChannelException {
         if (MessageChannelAPI.core == null) {

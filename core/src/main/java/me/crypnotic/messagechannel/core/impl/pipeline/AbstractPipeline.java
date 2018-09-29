@@ -48,7 +48,7 @@ public abstract class AbstractPipeline implements IPipeline {
             output.close();
             bytes.close();
 
-            core.getPlatform().send(message, bytes.toByteArray());
+            core.getRelay().send(message, bytes.toByteArray());
         } catch (IOException exception) {
             exception.printStackTrace();
         }
@@ -73,7 +73,7 @@ public abstract class AbstractPipeline implements IPipeline {
             output.close();
             bytes.close();
 
-            core.getPlatform().broadcast(message, bytes.toByteArray());
+            core.getRelay().broadcast(message, bytes.toByteArray());
         } catch (IOException exception) {
             exception.printStackTrace();
         }

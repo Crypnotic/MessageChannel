@@ -25,7 +25,7 @@ package me.crypnotic.messagechannel.bungeecord;
 
 import me.crypnotic.messagechannel.api.MessageChannelAPI;
 import me.crypnotic.messagechannel.api.access.IMessageChannel;
-import me.crypnotic.messagechannel.api.access.IPlatform;
+import me.crypnotic.messagechannel.api.access.IRelay;
 import me.crypnotic.messagechannel.api.exception.MessageChannelException;
 import me.crypnotic.messagechannel.api.pipeline.PipelineMessage;
 import me.crypnotic.messagechannel.core.MessageChannelCore;
@@ -36,7 +36,7 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
 
-public class MessageChannelBungeecord extends Plugin implements IPlatform, Listener {
+public class MessageChannelBungeecord extends Plugin implements IRelay, Listener {
 
     private IMessageChannel core;
 

@@ -29,5 +29,5 @@ public interface IMessageChannel {
 
     IPipelineRegistry getPipelineRegistry();
 
-    IPlatform getPlatform();
+    IRelay getRelay();
 }

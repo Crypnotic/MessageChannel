@@ -24,27 +24,27 @@
 package me.crypnotic.messagechannel.api.pipeline;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import me.crypnotic.messagechannel.api.exception.MessageChannelException;
 
 public class PipelineMessage {
 
-    private UUID target;
-    private List<Object> content;
+    @Getter
+    private final UUID target;
+    private final List<Object> content;
     private int index;
 
     public PipelineMessage() {
-        this.content = new ArrayList<Object>();
-        this.index = 0;
+        this(null);
     }
 
     public PipelineMessage(UUID target) {
-        this.target = target;
-        this.content = new ArrayList<Object>();
-        this.index = 0;
+        this(target, new ArrayList<Object>());
     }
 
     public PipelineMessage(UUID target, List<Object> content) {
@@ -79,11 +79,7 @@ public class PipelineMessage {
         return new PipelineMessage(target, content);
     }
 
-    public UUID getTarget() {
-        return target;
-    }
-
     public List<Object> getContents() {
-        return new ArrayList<Object>(content);
+        return Collections.unmodifiableList(content);
     }
 }
