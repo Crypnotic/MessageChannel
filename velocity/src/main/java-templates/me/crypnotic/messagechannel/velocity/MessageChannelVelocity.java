@@ -28,6 +28,7 @@ import java.util.Optional;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
+import com.velocitypowered.api.event.connection.PluginMessageEvent.ForwardResult;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.Player;
@@ -47,14 +48,14 @@ import me.crypnotic.messagechannel.core.MessageChannelCore;
 public class MessageChannelVelocity implements IPlatform {
 
     private IMessageChannel core;
-    private ProxyServer server;
+    private ProxyServer proxy;
 
     private MinecraftChannelIdentifier INCOMING;
     private MinecraftChannelIdentifier OUTGOING;
 
     @Inject
-    public MessageChannelVelocity(ProxyServer server) {
-        this.server = server;
+    public MessageChannelVelocity(ProxyServer proxy) {
+        this.proxy = proxy;
 
         this.core = new MessageChannelCore(this);
 
@@ -67,20 +68,19 @@ public class MessageChannelVelocity implements IPlatform {
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
-        server.getChannelRegistrar().register(INCOMING = MinecraftChannelIdentifier.create("messagechannel", "proxy"));
-        server.getChannelRegistrar().register(OUTGOING = MinecraftChannelIdentifier.create("messagechannel", "server"));
+        proxy.getChannelRegistrar().register(INCOMING = MinecraftChannelIdentifier.create("messagechannel", "proxy"));
+        proxy.getChannelRegistrar().register(OUTGOING = MinecraftChannelIdentifier.create("messagechannel", "server"));
 
-        server.getEventManager().register(this, this);
+        proxy.getEventManager().register(this, this);
     }
 
     @Override
     public boolean send(PipelineMessage message, byte[] data) {
-        Optional<Player> player = server.getPlayer(message.getTarget());
+        Optional<Player> player = proxy.getPlayer(message.getTarget());
         if (player.isPresent()) {
             Optional<ServerConnection> server = player.get().getCurrentServer();
             if (server.isPresent()) {
-                server.get().sendPluginMessage(OUTGOING, data);
-                return true;
+                return server.get().sendPluginMessage(OUTGOING, data);
             }
         }
         return false;
@@ -88,7 +88,7 @@ public class MessageChannelVelocity implements IPlatform {
 
     @Override
     public boolean broadcast(PipelineMessage message, byte[] data) {
-        for (RegisteredServer subserver : server.getAllServers()) {
+        for (RegisteredServer subserver : proxy.getAllServers()) {
             subserver.sendPluginMessage(OUTGOING, data);
         }
         return true;
@@ -98,6 +98,8 @@ public class MessageChannelVelocity implements IPlatform {
     public void onPluginMessage(PluginMessageEvent event) {
         if (event.getIdentifier().equals(INCOMING)) {
             core.getPipelineRegistry().receive(event.getData());
+
+            event.setResult(ForwardResult.handled());
         }
     }
 
