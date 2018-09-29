@@ -78,6 +78,4 @@ public abstract class AbstractPipeline implements IPipeline {
             exception.printStackTrace();
         }
     }
-
-    public abstract boolean isAsync();
 }

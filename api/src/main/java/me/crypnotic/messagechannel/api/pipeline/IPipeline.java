@@ -34,4 +34,6 @@ public interface IPipeline {
     void post(PipelineMessage message);
 
     void broadcast(PipelineMessage message);
+    
+    boolean isAsync();
 }
