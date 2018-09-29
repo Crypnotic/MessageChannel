@@ -4,7 +4,7 @@
 
 	<groupId>me.crypnotic.messagechannel</groupId>
 	<artifactId>messagechannel</artifactId>
-	<version>2.2.0-SNAPSHOT</version>
+	<version>3.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>MessageChannel</name>
