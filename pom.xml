@@ -5,11 +5,30 @@
 
 	<groupId>me.crypnotic.messagechannel</groupId>
 	<artifactId>messagechannel</artifactId>
-	<version>3.0.0-SNAPSHOT</version>
+	<version>3.0.0</version>
 	<packaging>pom</packaging>
 
 	<name>MessageChannel</name>
 	<description>A plugin messaging channel wrapper aimed at keeping all channel communications in a single, uniform pipeline.</description>
+	<url>https://github.com/Crypnotic/MessageChannel</url>
+
+	<organization>
+		<name>Crypnotic</name>
+		<url>https://github.com/Crypnotic</url>
+	</organization>
+
+	<issueManagement>
+		<system>GitHub</system>
+		<url>https://github.com/Crypnotic/MessageChannel/issues</url>
+	</issueManagement>
+
+	<licenses>
+		<license>
+			<name>MIT</name>
+			<url>https://github.com/Crypnotic/MessageChannel/blob/master/LICENSE.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
 	<modules>
 		<module>all</module>
@@ -30,6 +49,7 @@
 		</dependency>
 	</dependencies>
 
+
 	<scm>
 		<connection>scm:git:git://github.com/Crypnotic/MessageChannel.git</connection>
 		<developerConnection>scm:git:git@github.com:Crypnotic/MessageChannel.git</developerConnection>
@@ -48,6 +68,12 @@
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
+
+	<developers>
+		<developer>
+			<name>Crypnotic</name>
+		</developer>
+	</developers>
 
 	<build>
 		<resources>
@@ -69,6 +95,21 @@
 					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
 					<autoReleaseAfterClose>true</autoReleaseAfterClose>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 
 			<plugin>
@@ -116,23 +157,24 @@
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
 				<executions>
 					<execution>
-						<id>attach-javadocs</id>
+						<id>attach-sources</id>
 						<goals>
-							<goal>jar</goal>
+							<goal>jar-no-fork</goal>
 						</goals>
 					</execution>
 				</executions>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9.1</version>
 				<executions>
 					<execution>
-						<id>attach-sources</id>
+						<id>attach-javadocs</id>
 						<goals>
 							<goal>jar</goal>
 						</goals>

@@ -6,10 +6,9 @@
 	<parent>
 		<groupId>me.crypnotic.messagechannel</groupId>
 		<artifactId>messagechannel</artifactId>
-		<version>3.0.0-SNAPSHOT</version>
+		<version>3.0.0</version>
 		<relativePath>../</relativePath>
 	</parent>
 
 	<artifactId>messagechannel-api</artifactId>
-	<packaging>jar</packaging>
 </project>
