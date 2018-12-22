@@ -52,7 +52,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>${project.name}-${project.version}</finalName>
+		<finalName>${project.name}-${project.version}-universal</finalName>
 
 		<plugins>
 			<plugin>
